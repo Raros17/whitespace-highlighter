@@ -1,9 +1,13 @@
 {
   "name": "line-space-highlighter",
   "displayName": "Line Space Highlighter",
-  "plblisher": "hyojeong",
+  "publisher": "hyojeong",
   "version": "0.0.1",
   "description": "하이라이트 및 공백 표시 에디터 도우미",
+  "repository": {
+  "type": "git",
+  "url": "https://github.com/hyojeong/line-space-highlighter.git"
+},
   "main": "./dist/extension.js",  
   "scripts": {
     "compile": "tsc -p ./"

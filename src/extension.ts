@@ -1,9 +1,6 @@
 import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
-  console.log("확장 활성화됨");
-  vscode.window.showInformationMessage("🎉 확장 실행 완료!");
-
   const tabDecoration = vscode.window.createTextEditorDecorationType({
     backgroundColor: 'rgba(103, 58, 183, 0.8)', // 진한 보라
     borderRadius: '1px'
@@ -57,7 +54,7 @@ export function activate(context: vscode.ExtensionContext) {
       const line = doc.lineAt(lineNum);
       const text = line.text;
 
-      // ✅ 탭 / 스페이스 구분
+      // 탭 / 스페이스 구분
       for (let i = 0; i < text.length; i++) {
         const char = text[i];
 
@@ -70,7 +67,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
       }
 
-      // ✅ 줄 끝 공백 감지
+      // 줄 끝 공백 감지
       const match = text.match(/[\t ]+$/);
       if (match) {
         const start = new vscode.Position(lineNum, text.length - match[0].length);
@@ -109,7 +106,7 @@ export function activate(context: vscode.ExtensionContext) {
     trailingWhitespaceDecoration
   );
 
-  // ✅ 명령: 줄 끝 공백 제거
+  // 명령: 줄 끝 공백 제거
   const trimCommand = vscode.commands.registerCommand(
     'extension.trimTrailingWhitespace',
     () => {
@@ -133,7 +130,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  // ✅ 명령: 하이라이트 토글
+  // 명령: 하이라이트 토글
   const toggleCommand = vscode.commands.registerCommand(
     'extension.toggleWhitespaceHighlight',
     () => {
@@ -145,9 +142,11 @@ export function activate(context: vscode.ExtensionContext) {
         editor.setDecorations(tabDecoration, []);
         editor.setDecorations(spaceDecoration, []);
         editor.setDecorations(trailingWhitespaceDecoration, []);
+		editor.setDecorations(highlightDecoration, []);
         vscode.window.showInformationMessage("🔕 공백 하이라이트 꺼짐");
       } else {
         updateWhitespaceHighlights(editor);
+		updateHighlight(editor); 
         vscode.window.showInformationMessage("🔔 공백 하이라이트 켜짐");
       }
     }
