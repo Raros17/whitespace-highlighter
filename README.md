@@ -24,3 +24,11 @@ Ctrl + Shift + P를 눌러 명령창을 키고, 아래 중 원하는 명령어�
 
    ```bash
    code --install-extension whitespace-highlighter-0.0.1.vsix
+
+
+이 외에 VS code에서 좌측 탭을 눌러 설치할 수도 있습니다.
+예시: 
+1. VS Code에서 왼쪽 사이드바 → 확장 탭 (Extensions) 클릭
+2. 오른쪽 위 ··· 버튼 클릭
+3. Install from VSIX... 선택
+4. 만든 .vsix 파일 선택해서 열기
