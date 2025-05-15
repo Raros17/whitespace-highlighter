@@ -2,29 +2,31 @@ import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
   const tabDecoration = vscode.window.createTextEditorDecorationType({
-    backgroundColor: 'rgba(103, 58, 183, 0.8)', // 진한 보라
+    backgroundColor: 'rgba(103, 58, 183, 0.8)', // 보라색
     borderRadius: '1px'
   });
 
   const spaceDecoration = vscode.window.createTextEditorDecorationType({
-    backgroundColor: 'rgba(144, 202, 249, 0.4)', // 연한 파랑
+    backgroundColor: 'rgba(144, 202, 249, 0.4)', // 파란색
     borderRadius: '1px'
   });
 
   const trailingWhitespaceDecoration = vscode.window.createTextEditorDecorationType({
-    backgroundColor: 'rgba(255, 138, 128, 0.4)', // 연한 빨강
+    backgroundColor: 'rgba(255, 138, 128, 0.4)', // 빨간색
     borderRadius: '1px'
   });
 
   const highlightDecoration = vscode.window.createTextEditorDecorationType({
     isWholeLine: true,
-    backgroundColor: 'rgba(255, 215, 0, 0.3)',
+    backgroundColor: 'rgba(255, 215, 0, 0.3)', // 노란색
   });
 
   let whitespaceHighlightEnabled = true;
+  let selectionChangeDisposable: vscode.Disposable | undefined;
 
   const updateHighlight = (editor: vscode.TextEditor | undefined) => {
-    if (!editor) {return;}
+    if (!editor || !whitespaceHighlightEnabled) {return;}
+
     const selections = editor.selections;
 
     const ranges = selections.map(selection => {
@@ -54,7 +56,6 @@ export function activate(context: vscode.ExtensionContext) {
       const line = doc.lineAt(lineNum);
       const text = line.text;
 
-      // 탭 / 스페이스 구분
       for (let i = 0; i < text.length; i++) {
         const char = text[i];
 
@@ -67,7 +68,6 @@ export function activate(context: vscode.ExtensionContext) {
         }
       }
 
-      // 줄 끝 공백 감지
       const match = text.match(/[\t ]+$/);
       if (match) {
         const start = new vscode.Position(lineNum, text.length - match[0].length);
@@ -87,10 +87,13 @@ export function activate(context: vscode.ExtensionContext) {
     updateWhitespaceHighlights(editor);
   }
 
+  // 초기 리스너 등록 (줄 선택 하이라이트)
+  selectionChangeDisposable = vscode.window.onDidChangeTextEditorSelection(e => {
+    updateHighlight(e.textEditor);
+  });
+  context.subscriptions.push(selectionChangeDisposable);
+
   context.subscriptions.push(
-    vscode.window.onDidChangeTextEditorSelection(e => {
-      updateHighlight(e.textEditor);
-    }),
     vscode.workspace.onDidChangeTextDocument(e => {
       if (vscode.window.activeTextEditor?.document === e.document) {
         updateWhitespaceHighlights(vscode.window.activeTextEditor);
@@ -106,7 +109,7 @@ export function activate(context: vscode.ExtensionContext) {
     trailingWhitespaceDecoration
   );
 
-  // 명령: 줄 끝 공백 제거
+  // 줄 끝 공백 제거 커맨드
   const trimCommand = vscode.commands.registerCommand(
     'extension.trimTrailingWhitespace',
     () => {
@@ -130,7 +133,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  // 명령: 하이라이트 토글
+  // 토글 커맨드
   const toggleCommand = vscode.commands.registerCommand(
     'extension.toggleWhitespaceHighlight',
     () => {
@@ -142,12 +145,16 @@ export function activate(context: vscode.ExtensionContext) {
         editor.setDecorations(tabDecoration, []);
         editor.setDecorations(spaceDecoration, []);
         editor.setDecorations(trailingWhitespaceDecoration, []);
-		editor.setDecorations(highlightDecoration, []);
-        vscode.window.showInformationMessage("🔕 공백 하이라이트 꺼짐");
+        editor.setDecorations(highlightDecoration, []);
+        selectionChangeDisposable?.dispose(); // 리스너 제거
+        selectionChangeDisposable = undefined;
       } else {
         updateWhitespaceHighlights(editor);
-		updateHighlight(editor); 
-        vscode.window.showInformationMessage("🔔 공백 하이라이트 켜짐");
+        updateHighlight(editor);
+        selectionChangeDisposable = vscode.window.onDidChangeTextEditorSelection(e => {
+          updateHighlight(e.textEditor);
+        });
+        context.subscriptions.push(selectionChangeDisposable);
       }
     }
   );

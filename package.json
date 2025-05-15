@@ -13,8 +13,7 @@
     "compile": "tsc -p ./"
   },
  "activationEvents": [
-  "onStartupFinished",
-  "onDidChangeActiveTextEditor"
+  "onStartupFinished"
 ],
   "contributes": {
 	"commands": [
