@@ -1,0 +1,34 @@
+{
+  "name": "line-space-highlighter",
+  "displayName": "Line Space Highlighter",
+  "plblisher": "hyojeong",
+  "version": "0.0.1",
+  "description": "하이라이트 및 공백 표시 에디터 도우미",
+  "main": "./dist/extension.js",  
+  "scripts": {
+    "compile": "tsc -p ./"
+  },
+  "activationEvents": [
+    "*"
+  ],
+  "contributes": {
+	"commands": [
+    {
+      "command": "extension.trimTrailingWhitespace",
+      "title": "Trim Trailing Whitespace"
+    },
+    {
+      "command": "extension.toggleWhitespaceHighlight",
+      "title": "Toggle Whitespace Highlight"
+    }
+  ]},
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/vscode": "^1.85.0"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  }
+}
+
+
